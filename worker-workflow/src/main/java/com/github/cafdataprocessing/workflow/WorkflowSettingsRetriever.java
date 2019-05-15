@@ -95,6 +95,7 @@ public final class WorkflowSettingsRetriever
         settings.put("task", processTaskConfigs(document, requiredConfig.getTaskSettings()));
         settings.put("repository", processRepositoryConfigs(document, tenantId, requiredConfig.getRepositorySettings()));
         settings.put("tenant", processTenantConfigs(tenantId, requiredConfig.getTenantSettings()));
+        LOG.warn("Settings in json format: {}",  gson.toJson(settings));
         document.getField("CAF_WORKFLOW_SETTINGS").set(gson.toJson(settings));
         document.getTask().getResponse().getCustomData().put("CAF_WORKFLOW_SETTINGS", gson.toJson(settings));
     }
