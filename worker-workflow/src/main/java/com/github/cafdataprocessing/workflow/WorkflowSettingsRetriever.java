@@ -98,6 +98,7 @@ public final class WorkflowSettingsRetriever
         LOG.warn("Settings in json format: {}",  gson.toJson(settings));
         document.getField("CAF_WORKFLOW_SETTINGS").set(gson.toJson(settings));
         document.getTask().getResponse().getCustomData().put("CAF_WORKFLOW_SETTINGS", gson.toJson(settings));
+        document.getTask().getResponse().getCustomData().put("tenantId", tenantId);
     }
 
     public void checkHealth() {
