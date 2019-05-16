@@ -23,7 +23,7 @@ public final class WorkflowSettings
     private List<String> taskSettings;
     private Map<String, RepoConfigSource> repositorySettings;
     private List<String> tenantSettings;
-    private Map<String, TenandIdConfigSource> tenantIdSettings;
+    private Map<String, TenandIdConfigSource> tenantId;
 
     /**
      * @return the taskSettings
@@ -73,14 +73,14 @@ public final class WorkflowSettings
         this.tenantSettings = tenantSettings;
     }
 
-    public Map<String, TenandIdConfigSource> getTenantIdSettings()
+    public Map<String, TenandIdConfigSource> getTenantId()
     {
-        return tenantIdSettings;
+        return tenantId;
     }
 
-    public void setTenantIdSettings(Map<String, TenandIdConfigSource> tenantIdSettings)
+    public void setTenantId(Map<String, TenandIdConfigSource> tenantId)
     {
-        this.tenantIdSettings = tenantIdSettings;
+        this.tenantId = tenantId;
     }
 
     

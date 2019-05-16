@@ -148,7 +148,7 @@ public class WorkflowProcessingScriptsTest
         tenantMap.put("id", tenandIdConfigSource);
         
         WorkflowSettings ws = new WorkflowSettings();
-        ws.setTenantIdSettings(tenantMap);
+        ws.setTenantId(tenantMap);
         ws.setRepositorySettings(repoMap);
         ws.setTenantSettings(Arrays.asList("RECORD_USAGE", "RECORD_ENTITY_VERSIONS"));
         ws.setTaskSettings(new ArrayList());
