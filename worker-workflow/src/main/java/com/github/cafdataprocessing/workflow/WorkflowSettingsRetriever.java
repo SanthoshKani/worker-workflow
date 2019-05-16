@@ -21,6 +21,7 @@ import com.github.cafdataprocessing.workflow.cache.WorkflowSettingsTenantCacheKe
 import com.github.cafdataprocessing.workflow.model.RepoConfigSource;
 import static com.github.cafdataprocessing.workflow.model.RepoConfigSource.RepositoryIdSource.CUSTOMDATA;
 import static com.github.cafdataprocessing.workflow.model.RepoConfigSource.RepositoryIdSource.FIELD;
+import com.github.cafdataprocessing.workflow.model.TenandIdConfigSource;
 import com.github.cafdataprocessing.workflow.model.WorkflowSettings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public final class WorkflowSettingsRetriever
 {
     private final static Logger LOG = LoggerFactory.getLogger(WorkflowSettingsRetriever.class);
-    private final LoadingCache<WorkflowSettingsCacheKey, String> settingsCache;
+    private LoadingCache<WorkflowSettingsCacheKey, String> settingsCache;
     private final ApiClient apiClient;
     private final Gson gson;
     private final SettingsApi settingsApi;
@@ -74,6 +75,11 @@ public final class WorkflowSettingsRetriever
         settingsApi = new SettingsApi();
         settingsApi.setApiClient(apiClient);
     }
+    
+    public WorkflowSettingsRetriever(final LoadingCache<WorkflowSettingsCacheKey, String> settingsCache){
+        this();
+        this.settingsCache = settingsCache;
+    }
 
     /**
      * Retrieves the values for all of the required settings provided and creates a Map from them. This is then JSON serialized and added
@@ -96,7 +102,7 @@ public final class WorkflowSettingsRetriever
         settings.put("task", processTaskConfigs(document, requiredConfig.getTaskSettings()));
         settings.put("repository", processRepositoryConfigs(document, tenantId, requiredConfig.getRepositorySettings()));
         settings.put("tenant", processTenantConfigs(tenantId, requiredConfig.getTenantSettings()));
-        settings.put("tenantId", processTenantIdConfigs(requiredConfig.getTenantId()));
+        settings.put("tenantId", processTenantIdConfigs(document, requiredConfig.getTenantIdSettings()));
         LOG.warn("Settings in json format: {}",  gson.toJson(settings));
         document.getField("CAF_WORKFLOW_SETTINGS").set(gson.toJson(settings));
         document.getTask().getResponse().getCustomData().put("CAF_WORKFLOW_SETTINGS", gson.toJson(settings));
@@ -208,17 +214,42 @@ public final class WorkflowSettingsRetriever
     {
         final Map<String, String> customConfigs = new HashMap<>();
         for (final String config : configs) {
+            LOG.warn("processTaskConfigs: {}", config);
             final String configValue = document.getCustomData("TASK_SETTING_" + config.toUpperCase(Locale.US));
             customConfigs.put(config, configValue);
+            LOG.warn("processTaskConfigs value: {}", configValue);
         }
         return customConfigs;
     }
     
-    private static Map<String, String> processTenantIdConfigs(final String config)
+    private static Map<String, String> processTenantIdConfigs(final Document document, final  Map<String,TenandIdConfigSource> configs)
         throws ApiException, DocumentWorkerTransientException
     {
         final Map<String, String> customConfigs = new HashMap<>();
-        customConfigs.put("tenantId", config);
+        String tenantIdKey = null;
+        for (final Map.Entry<String, TenandIdConfigSource> config : configs.entrySet()) {
+            switch (config.getValue().getSource()) {
+                case FIELD:
+                    final FieldValue tenantIdKeyField = document.getField(
+                        config.getValue().getKey()).getValues().stream().findFirst().orElseThrow(()
+                        -> new RuntimeException("Unable to obtain repository id from document field for config "
+                            + config.getValue().getKey()));
+                    tenantIdKey = tenantIdKeyField.getStringValue();
+                    customConfigs.put(config.getKey(), tenantIdKey);
+                    break;
+                case CUSTOMDATA:
+                    tenantIdKey = document.getCustomData(config.getValue().getKey());
+                    if (tenantIdKey == null) {
+                        throw new RuntimeException("Unable to obtain repository id  from customdata for config "
+                            + config.getValue().getKey());
+                    }
+                    customConfigs.put(config.getKey(), tenantIdKey);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid source for tenantId id. Source of "
+                        + config.getValue().getSource() + " is not recognised as a valid source.");
+            }
+        }
 
         return customConfigs;
     }
