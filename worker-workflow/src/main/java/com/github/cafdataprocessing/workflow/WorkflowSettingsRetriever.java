@@ -95,7 +95,6 @@ public final class WorkflowSettingsRetriever
         throws ApiException, DocumentWorkerTransientException
     {
         final String tenantId = document.getCustomData("tenantId");
-        LOG.warn("TenantId: {}", tenantId);
         Objects.requireNonNull(tenantId);
         Objects.requireNonNull(requiredConfig);
         final Map<String, Map<String, String>> settings = new HashMap<>();
@@ -103,7 +102,7 @@ public final class WorkflowSettingsRetriever
         settings.put("repository", processRepositoryConfigs(document, tenantId, requiredConfig.getRepositorySettings()));
         settings.put("tenant", processTenantConfigs(tenantId, requiredConfig.getTenantSettings()));
         settings.put("tenantId", processTenantIdConfigs(document, requiredConfig.getTenantId()));
-        LOG.warn("Settings in json format: {}",  gson.toJson(settings));
+        LOG.debug("Settings in json format: {}",  gson.toJson(settings));
         document.getField("CAF_WORKFLOW_SETTINGS").set(gson.toJson(settings));
         document.getTask().getResponse().getCustomData().put("CAF_WORKFLOW_SETTINGS", gson.toJson(settings));
     }
@@ -214,10 +213,8 @@ public final class WorkflowSettingsRetriever
     {
         final Map<String, String> customConfigs = new HashMap<>();
         for (final String config : configs) {
-            LOG.warn("processTaskConfigs: {}", config);
             final String configValue = document.getCustomData("TASK_SETTING_" + config.toUpperCase(Locale.US));
             customConfigs.put(config, configValue);
-            LOG.warn("processTaskConfigs value: {}", configValue);
         }
         return customConfigs;
     }

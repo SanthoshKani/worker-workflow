@@ -55,10 +55,10 @@ public class WorkflowProcessingScriptsTest
     private static final String TEST_STORAGE_REF = "TestStorageRef1";
     private static final String TEMP_WORKFLOW_SCRIPT = "temp-workflow.js";
     private static final String WORKFLOW_SCRIPT = "workflow.js";
-    
+
     @Mock
     LoadingCache<WorkflowSettingsCacheKey, String> settingsCache;
-    
+
     @Test
     public void addScriptsTest() throws WorkerException, ScriptException, IOException
     {
@@ -82,7 +82,7 @@ public class WorkflowProcessingScriptsTest
             }
         }
     }
-    
+
     @Test
     public void retrieveWorkflowSettingsTest() throws WorkerException, ApiException, DocumentWorkerTransientException, ExecutionException
     {
@@ -90,10 +90,12 @@ public class WorkflowProcessingScriptsTest
         when(settingsCache.get(any(WorkflowSettingsCacheKey.class)))
             .thenReturn("bla bla for repo").thenReturn("false").thenReturn("false");
         final WorkflowSettingsRetriever workflowSettingsRetriever = new WorkflowSettingsRetriever(settingsCache);
+
         final Document document = getDocumentWithCustomData();
         workflowSettingsRetriever.retrieveWorkflowSettings(getWorkflowSettings(), document);
+
         final String doc = document.getField("CAF_WORKFLOW_SETTINGS").getStringValues().get(0);
-        Map<String, Map<String, String>> fromJson = gson.fromJson(doc, Map.class);
+        final Map<String, Map<String, String>> fromJson = gson.fromJson(doc, Map.class);
         assertThat(fromJson, hasKey("tenantId"));
         assertThat(fromJson.get("tenantId"), hasEntry("id", "davide"));
         assertThat(fromJson, hasKey("task"));
@@ -103,7 +105,7 @@ public class WorkflowProcessingScriptsTest
         assertThat(fromJson.get("tenant"), hasEntry("RECORD_ENTITY_VERSIONS", "false"));
         assertThat(fromJson.get("tenant"), hasEntry("RECORD_USAGE", "false"));
     }
-    
+
     private static Document getDocument() throws WorkerException
     {
         final Map<String, List<DocumentWorkerFieldValue>> fields = new HashMap<>();
@@ -111,7 +113,7 @@ public class WorkflowProcessingScriptsTest
         document.setReference("TestDoc");
         return document;
     }
-    
+
     private static Document getDocumentWithCustomData() throws WorkerException
     {
         final Map<String, List<DocumentWorkerFieldValue>> fields = new HashMap<>();
@@ -119,7 +121,7 @@ public class WorkflowProcessingScriptsTest
         repo.data = "555";
         repo.encoding = DocumentWorkerFieldEncoding.utf8;
         fields.put("REPOSITORY_ID", Arrays.asList(repo));
-        
+
         final Document document = DocumentBuilder.configure()
             .withFields(fields)
             .withCustomData()
@@ -132,22 +134,22 @@ public class WorkflowProcessingScriptsTest
         document.setReference("TestDoc");
         return document;
     }
-    
+
     private static WorkflowSettings getWorkflowSettings()
     {
-        RepoConfigSource repoConfigSource = new RepoConfigSource();
+        final RepoConfigSource repoConfigSource = new RepoConfigSource();
         repoConfigSource.setKey("REPOSITORY_ID");
         repoConfigSource.setSource(RepoConfigSource.RepositoryIdSource.FIELD);
-        Map<String, RepoConfigSource> repoMap = new HashMap<>();
+        final Map<String, RepoConfigSource> repoMap = new HashMap<>();
         repoMap.put("ee.grammarmap", repoConfigSource);
-        
-        TenandIdConfigSource tenandIdConfigSource = new TenandIdConfigSource();
+
+        final TenandIdConfigSource tenandIdConfigSource = new TenandIdConfigSource();
         tenandIdConfigSource.setKey("tenantId");
         tenandIdConfigSource.setSource(TenandIdConfigSource.TenantIdSource.CUSTOMDATA);
-        Map<String, TenandIdConfigSource> tenantMap = new HashMap<>();
+        final Map<String, TenandIdConfigSource> tenantMap = new HashMap<>();
         tenantMap.put("id", tenandIdConfigSource);
-        
-        WorkflowSettings ws = new WorkflowSettings();
+
+        final WorkflowSettings ws = new WorkflowSettings();
         ws.setTenantId(tenantMap);
         ws.setRepositorySettings(repoMap);
         ws.setTenantSettings(Arrays.asList("RECORD_USAGE", "RECORD_ENTITY_VERSIONS"));
