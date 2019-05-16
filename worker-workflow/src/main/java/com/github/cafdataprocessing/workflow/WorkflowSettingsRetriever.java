@@ -89,16 +89,17 @@ public final class WorkflowSettingsRetriever
         throws ApiException, DocumentWorkerTransientException
     {
         final String tenantId = document.getCustomData("tenantId");
+        LOG.warn("TenantId: {}", tenantId);
         Objects.requireNonNull(tenantId);
         Objects.requireNonNull(requiredConfig);
         final Map<String, Map<String, String>> settings = new HashMap<>();
         settings.put("task", processTaskConfigs(document, requiredConfig.getTaskSettings()));
         settings.put("repository", processRepositoryConfigs(document, tenantId, requiredConfig.getRepositorySettings()));
         settings.put("tenant", processTenantConfigs(tenantId, requiredConfig.getTenantSettings()));
+        settings.put("tenantId", processTenantIdConfigs(requiredConfig.getTenantId()));
         LOG.warn("Settings in json format: {}",  gson.toJson(settings));
         document.getField("CAF_WORKFLOW_SETTINGS").set(gson.toJson(settings));
         document.getTask().getResponse().getCustomData().put("CAF_WORKFLOW_SETTINGS", gson.toJson(settings));
-        document.getTask().getResponse().getCustomData().put("tenantId", tenantId);
     }
 
     public void checkHealth() {
@@ -210,6 +211,15 @@ public final class WorkflowSettingsRetriever
             final String configValue = document.getCustomData("TASK_SETTING_" + config.toUpperCase(Locale.US));
             customConfigs.put(config, configValue);
         }
+        return customConfigs;
+    }
+    
+    private static Map<String, String> processTenantIdConfigs(final String config)
+        throws ApiException, DocumentWorkerTransientException
+    {
+        final Map<String, String> customConfigs = new HashMap<>();
+        customConfigs.put("tenantId", config);
+
         return customConfigs;
     }
 
