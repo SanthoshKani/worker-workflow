@@ -8,13 +8,13 @@ A workflow is described using yaml and contains workflow arguments and actions.
 | arguments | A list of argument names, default values and sources for argument values. |
 | actions | A list of action names, output queues, conditions and custom data.  |
 
-## Arguments
+## arguments
 
-Workflow arguments are resolved by the workflow worker and placed into the CAF_WORKFLOW_SETTINGS document field and CAF_WORKFLOW_SETTINGS document custom data. Arguments can be referenced by name when defining the custom data for an action.
+Workflow arguments are resolved by the workflow worker and placed into the `CAF_WORKFLOW_SETTINGS` document field and `CAF_WORKFLOW_SETTINGS` document custom data. Arguments are referenced by name when defining the custom data for an action.
 
 An argument has 3 fields.
 
-1. name (The name of the argument when used in an actions custom data section)
+1. name (The name of the argument, used in an actions custom data section)
 2. defaultValue (Optional. The default value if no sources are supplied or the supplied sources yeild no value)
 3. sources (A list of source objects which are resolved in order until a value is returned)
 
@@ -22,12 +22,12 @@ A source has 3 fields.
 
 1. name (The name of a document field, custom data key or setting key from the settings service)
 2. type (`FIELD` or `CUSTOM_DATA` or `SETTINGS_SERVICE`)
-3. options (When source type is `SETTINGS_SERVICE` options are supplied as the scope argument to the settings service)
+3. options (When source type is `SETTINGS_SERVICE` options are supplied as the scopes argument to the settings service)
 
 The following patterns will be substituted in an options string.
 
 1. `%f:FIELD_NAME%` will be replaced by the first value of the document field called `FIELD_NAME`
-2. `%cd:CUSTOM_DATA_NAME%` will be replaced by the value of the custom data key called `CUSTOM_DATA_NAME`
+2. `%cd:CUSTOM_DATA_NAME%` will be replaced by the value of the custom data key `CUSTOM_DATA_NAME`
 
 ```yaml
 arguments:
@@ -39,19 +39,19 @@ arguments:
         options: repository-%f:REPOSITORY_ID%,tenant-%cd:TENANT_ID%
 ```
 
-## Actions
+## actions
 
 An action has 5 fields.
 
 1. name (The name of the action)
 2. queueName (The queue where the document will be sent to have the action performed)
-3. conditionFunction (A function that accepts a document argument and return true if the document meets the condition of the action)
+3. conditionFunction (A function that accepts a document argument and returns true if the document meets the conditions of the action)
 4. customData (Custom data required by the worker executing the action) 
 5. scripts (Additional scripts that will be executed by the worker executing the action)
 
 ### customData
 
-Custom data is comprised of keys and values, each key and value is added to the custom data of the document queued for a document worker. The value of a custom data key can be a string literal `"'My value'"` or the name of an argument `OPERATION_MODE` defined in the arugments section.
+Custom data is comprised of keys and values, each key and value is added to the custom data of the document queued for a document worker. The value of a custom data key can be a string literal `"'My value'"` or the name of an argument `OPERATION_MODE` defined in the arguments section.
 
 ### scripts
 
