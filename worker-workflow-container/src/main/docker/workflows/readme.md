@@ -51,7 +51,7 @@ An action has 5 fields.
 
 ### customData
 
-Custom data is comprised of keys and values, each key and value is added to the custom data of the document queued for a document worker. The value of a custom data key can be a string literal "'My value'" or the name of an argument `OPERATION_MODE` defined in the arugments section.
+Custom data is comprised of keys and values, each key and value is added to the custom data of the document queued for a document worker. The value of a custom data key can be a string literal `"'My value'"` or the name of an argument `OPERATION_MODE` defined in the arugments section.
 
 ### scripts
 
