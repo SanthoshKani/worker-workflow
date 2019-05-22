@@ -32,6 +32,6 @@ The main places where the worker can fail are;
 ## Workflow
 
 The workflow file would have 2 parts called Arguments and Actions. 
-Further information on the fields on workflow can be found here (../worker-workflow-container/src/main/docker/workflows/readme.md)
+Further information on the fields on workflow can be found [here](../worker-workflow-container/src/main/docker/workflows/readme.md)
 
 
