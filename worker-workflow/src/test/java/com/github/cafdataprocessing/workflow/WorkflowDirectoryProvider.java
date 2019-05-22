@@ -13,7 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-{
-    "taskSettings": [],
-    "repositorySettings": {}
+package com.github.cafdataprocessing.workflow;
+
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+
+public class WorkflowDirectoryProvider {
+    public static String getWorkflowDirectory(final String resourceDirectoryName)  {
+        final URL resource = WorkflowDirectoryProvider.class.getClassLoader().getResource(resourceDirectoryName);
+        try {
+            return Paths.get(resource.toURI()).toString();
+        } catch (final URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

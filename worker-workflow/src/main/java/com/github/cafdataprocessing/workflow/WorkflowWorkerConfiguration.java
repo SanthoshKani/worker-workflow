@@ -30,6 +30,12 @@ public final class WorkflowWorkerConfiguration
     @NotNull
     private String workflowsDirectory;
 
+    /**
+     * The URL for the settings service.
+     */
+    @NotNull
+    private String settingsServiceUrl;
+
     public String getWorkflowsDirectory()
     {
         return workflowsDirectory;
@@ -38,5 +44,13 @@ public final class WorkflowWorkerConfiguration
     public void setWorkflowsDirectory(final String workflowsDirectory)
     {
         this.workflowsDirectory = workflowsDirectory;
+    }
+
+    public String getSettingsServiceUrl() {
+        return settingsServiceUrl;
+    }
+
+    public void setSettingsServiceUrl(final String settingsServiceUrl) {
+        this.settingsServiceUrl = settingsServiceUrl;
     }
 }

@@ -16,13 +16,13 @@
 package com.github.cafdataprocessing.workflow;
 
 import com.hpe.caf.api.ConfigurationException;
+import com.hpe.caf.api.ConfigurationSource;
 import com.hpe.caf.worker.document.exceptions.DocumentWorkerTransientException;
 import com.hpe.caf.worker.document.extensibility.DocumentWorker;
 import com.hpe.caf.worker.document.extensibility.DocumentWorkerFactory;
 import com.hpe.caf.worker.document.model.Application;
 import com.hpe.caf.worker.document.model.Document;
 import com.hpe.caf.worker.document.model.HealthMonitor;
-import java.io.IOException;
 
 /**
  * A factory to create workflow workers, passing them a configuration instance.
@@ -33,8 +33,16 @@ public final class WorkflowWorkerFactory implements DocumentWorkerFactory
     public DocumentWorker createDocumentWorker(final Application application)
     {
         try{
-        return new WorkflowWorker(application);
-        } catch(final IOException | ConfigurationException ex){
+            final WorkflowWorkerConfiguration workflowWorkerConfiguration = application
+                    .getService(ConfigurationSource.class)
+                    .getConfiguration(WorkflowWorkerConfiguration.class);
+
+            return new WorkflowWorker(workflowWorkerConfiguration,
+                    new WorkflowManager(application, workflowWorkerConfiguration.getWorkflowsDirectory()),
+                    new ScriptManager(),
+                    new ArgumentsManager(workflowWorkerConfiguration.getSettingsServiceUrl()));
+
+        } catch(final ConfigurationException ex){
             return new DocumentWorker()
             {
                 @Override

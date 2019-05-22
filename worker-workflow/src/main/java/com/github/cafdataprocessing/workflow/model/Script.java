@@ -15,44 +15,23 @@
  */
 package com.github.cafdataprocessing.workflow.model;
 
-public final class RepoConfigSource
-{
-    private RepositoryIdSource source;
-    private String key;
+public class Script {
+    private String name;
+    private String script;
 
-    /**
-     * @return the source
-     */
-    public RepositoryIdSource getSource()
-    {
-        return source;
+    public String getName() {
+        return name;
     }
 
-    /**
-     * @param source the source to set
-     */
-    public void setSource(final RepositoryIdSource source)
-    {
-        this.source = source;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    /**
-     * @return the key
-     */
-    public String getKey()
-    {
-        return key;
+    public String getScript() {
+        return script;
     }
 
-    /**
-     * @param key the key to set
-     */
-    public void setKey(final String key)
-    {
-        this.key = key;
-    }
-    
-    public enum RepositoryIdSource{
-        FIELD, CUSTOMDATA
+    public void setScript(final String script) {
+        this.script = script;
     }
 }
